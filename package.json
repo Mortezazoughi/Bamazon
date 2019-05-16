@@ -1,0 +1,25 @@
+{
+  "name": "Bamazon",
+  "version": "1.0.0",
+  "description": "In this classwork, we create a database and two tables with values of products for customers to purchase.   Customers have the ability to view and purchase the itema they choose.  A manager has ability to view the inventory, add items to the table as well as change the price or quantity of the inventory.",
+  "main": "bamazonCustomer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mortezazoughi/Bamazon.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mortezazoughi/Bamazon/issues"
+  },
+  "homepage": "https://github.com/Mortezazoughi/Bamazon#readme",
+  "dependencies": {
+    "dotenv": "^8.0.0",
+    "inquirer": "^6.3.1",
+    "mysql": "^2.17.1"
+  }
+}
