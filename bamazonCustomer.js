@@ -21,20 +21,33 @@ connection.connect(function(err) {
   console.log('connected as id ' + connection.threadId);
 });
 
+allData();
+
+function allData() {
+  connection.query('SELECT * FROM products', function(err, res) {
+    if (err) throw err;
+    Table = res;
+    console.log(Table);
+  });
+}
+
 readProducts();
 
 function readProducts() {
-  console.log('Selecting all products...\n');
+  connection.query(
+    'SELECT item_id, product_name, price FROM products',
+    function(err, res) {
+      if (err) throw err;
+      // Log all results of the SELECT statement
 
-  connection.query('SELECT * FROM products', function(err, res, fields) {
-    if (err) throw err;
-    // Log all results of the SELECT statement
+      choiceArr = res.length;
+      productData = res;
+      console.log(choiceArr);
+      console.table(productData);
 
-    console.log(res.length);
-    console.table(res);
-
-    start();
-  });
+      start();
+    }
+  );
 }
 
 // CUSTOMER BUYING ITEMS
@@ -44,14 +57,20 @@ function start() {
     .prompt([
       {
         name: 'Item',
-        type: 'rawlist',
-        message: 'Please choose item ID# for the item you like to buy?',
-        choices: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        type: 'list',
+        choices: function() {
+          itemIdArr = [];
+          for (var i = 1; i < choiceArr + 1; i++) {
+            itemIdArr.push(i);
+          }
+          return itemIdArr;
+        },
+        message: 'Please choose item ID# for the item you like to buy?'
       },
       {
         name: 'Amount',
         type: 'input',
-        message: 'How many would you like?',
+        message: `How many would you like?`,
         validate: function(value) {
           if (isNaN(value) == false) {
             return true;
@@ -62,10 +81,23 @@ function start() {
       }
     ])
     .then(function(answer) {
-      if (answer.Item === 2) {
-        console.log('You chose 2');
-        console.log(answer.Item);
+      id = answer.Item;
+      number = answer.Amount;
+      if (Table[id].stock_quantity > number) {
+        totalPurchase = number * productData[id].price.toFixed(2);
+        console.log(
+          `your total purchase of ${number} ${
+            productData[id].product_name
+          }(s) is $${totalPurchase.toFixed(2)}`
+        );
+        // console.log('$' + totalPurchase.toFixed(2));
+
+        console.log(choiceArr);
+        console.log(productData[id].product_name);
+        console.log(answer.Amount);
       } else {
+        console.log(productData[id].product_name);
+        console.log(Table[id].stock_quantity);
         console.log('Choose another number');
       }
 
