@@ -27,7 +27,6 @@ function allData() {
   connection.query('SELECT * FROM products', function(err, res) {
     if (err) throw err;
     Table = res;
-    console.log(Table);
   });
 }
 
@@ -42,17 +41,20 @@ function readProducts() {
 
       choiceArr = res.length;
       productData = res;
-      console.log(choiceArr);
+      // console.log(choiceArr);
+      // console.log(`\n   \n  `);
+      // console.log(Table);
+      console.log(`\n  \n `);
       console.table(productData);
 
-      start();
+      shopping();
     }
   );
 }
 
 // CUSTOMER BUYING ITEMS
 
-function start() {
+function shopping() {
   inquirer
     .prompt([
       {
@@ -65,7 +67,8 @@ function start() {
           }
           return itemIdArr;
         },
-        message: 'Please choose item ID# for the item you like to buy?'
+
+        message: 'Please choose ID# of item you like to purchase?'
       },
       {
         name: 'Amount',
@@ -81,26 +84,91 @@ function start() {
       }
     ])
     .then(function(answer) {
-      id = answer.Item;
+      id = answer.Item - 1;
       number = answer.Amount;
-      if (Table[id].stock_quantity > number) {
+      // console.log(id);
+      // console.log(itemIdArr);
+
+      // console.log(Table[id].stock_quantity);
+      if (Table[id].stock_quantity < number) {
+        // console.log(Table[id].stock_quantity);
+        console.log(
+          `\nInsufficient quntity. Total quantity of ${
+            productData[id].product_name
+          }(s) on hand is ${Table[id].stock_quantity}. \nPlease try again.\n `
+        );
+        setTimeout(function() {
+          shopping;
+        }, 3000);
+      } else {
         totalPurchase = number * productData[id].price.toFixed(2);
         console.log(
-          `your total purchase of ${number} ${
+          `\nyour total purchase of ${number} ${
             productData[id].product_name
           }(s) is $${totalPurchase.toFixed(2)}`
         );
+
+        totalSale =
+          parseFloat(Table[id].product_sale) + parseFloat(totalPurchase);
+        // console.log(totalSale.toFixed(2));
+
+        quantityUpdate = Table[id].stock_quantity - number;
+        // console.log(quantityUpdate);
         // console.log('$' + totalPurchase.toFixed(2));
 
-        console.log(choiceArr);
-        console.log(productData[id].product_name);
-        console.log(answer.Amount);
-      } else {
-        console.log(productData[id].product_name);
-        console.log(Table[id].stock_quantity);
-        console.log('Choose another number');
-      }
+        // console.log(choiceArr);
+        // console.log(Table[id].stock_quantity);
+        // console.log(productData[id].product_name);
+        // console.log(answer.Amount);
 
-      connection.end();
+        query = connection.query(
+          'UPDATE products SET ?,? WHERE ?',
+          [
+            { stock_quantity: quantityUpdate },
+            { product_sale: totalSale },
+            { item_id: Table[id].item_id }
+          ],
+          function(err, res) {
+            if (err) throw err;
+            console.log(
+              `\nThank you for purchasing ${productData[id].product_name}. \n `
+            );
+          }
+        );
+      }
+      setTimeout(function() {
+        shopMore();
+      }, 2000);
     });
+
+  // ALLOWING THE CUSTOMER TO PURCHASE OTHER ITEMS OR EXIT
+
+  function shopMore() {
+    inquirer
+      .prompt({
+        //ALLOWING TO PURCHASE ADDITIONAL ITEMS
+        name: 'buyMore',
+        type: 'confirm',
+        message: 'Would you like to purchase additional items?',
+        default: true
+        // validate: function(value) {
+        //   if (this.buyMore == 'y' || this.buyMore == 'n') {
+        //     return true;
+        //   } else {
+        //     return false;
+        //   }
+        // }
+      })
+      .then(function(answer) {
+        if (answer.buyMore == true) {
+          console.log(`\n `);
+          shopping();
+        } else {
+          console.log(
+            `\nThank you for shopping with us today. \n Have a great day.`
+          );
+          connection.end();
+        }
+      });
+  }
 }
