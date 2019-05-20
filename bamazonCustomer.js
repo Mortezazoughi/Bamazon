@@ -21,6 +21,16 @@ connection.connect(function(err) {
   console.log('connected as id ' + connection.threadId);
 });
 
+departUpdate();
+
+function departUpdate() {
+  connection.query('SELECT * FROM departments', function(err, res) {
+    if (err) throw err;
+    TableNew = res;
+    console.table(TableNew);
+  });
+}
+
 allData();
 
 function allData() {
@@ -88,7 +98,7 @@ function shopping() {
     ])
     .then(function(answer) {
       str = answer.Item;
-      id = parseInt(str.charAt(0)) - 1;
+      id = parseInt(str.charAt(0) + str.charAt(1)) - 1;
       // id = answer.Item - 1;
       number = answer.Amount;
       // console.log(id);

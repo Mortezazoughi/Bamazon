@@ -63,7 +63,7 @@ CREATE TABLE departments (
 
   over_head_costs DECIMAL(10,2) NULL,
 
-  product_sale DECIMAL(10,2) NULL,
+  
 
   PRIMARY KEY (department_id),
   Created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -73,9 +73,11 @@ CREATE TABLE departments (
 
 -- ADDING VALUES TO TABLE --
 
-INSERT INTO departments (department_name, over_head_costs,product_sale)
-VALUES ("Hardware", 75000,0);
-INSERT INTO departments (department_name, over_head_costs,product_sale)
-VALUES ("Software", 100000,0);
-INSERT INTO departments (department_name, over_head_costs,product_sale)
-VALUES ("Office", 12000,0);
+INSERT INTO departments (department_name, over_head_costs)
+VALUES ("Hardware", 75000);
+INSERT INTO departments (department_name, over_head_costs)
+VALUES ("Software", 100000);
+INSERT INTO departments (department_name, over_head_costs)
+VALUES ("Office", 12000);
+INSERT INTO departments (department_name, over_head_costs)
+VALUES ("Electronics", 20000);
