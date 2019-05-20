@@ -62,8 +62,11 @@ function shopping() {
         type: 'list',
         choices: function() {
           itemIdArr = [];
-          for (var i = 1; i < choiceArr + 1; i++) {
-            itemIdArr.push(i);
+          for (var i = 0; i < choiceArr; i++) {
+            itemId = Table[i].item_id;
+            prodName = Table[i].product_name;
+            prodIndex = `${itemId}- ${prodName}`;
+            itemIdArr.push(prodIndex);
           }
           return itemIdArr;
         },
@@ -84,7 +87,9 @@ function shopping() {
       }
     ])
     .then(function(answer) {
-      id = answer.Item - 1;
+      str = answer.Item;
+      id = parseInt(str.charAt(0)) - 1;
+      // id = answer.Item - 1;
       number = answer.Amount;
       // console.log(id);
       // console.log(itemIdArr);
